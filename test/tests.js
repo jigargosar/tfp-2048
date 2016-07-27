@@ -42,10 +42,10 @@ QUnit.test("Grid slideTop", function (a) {
 
     var grid = createGridFromList(initialGridValues);
     a.deepEqual(G.slideTop(grid), [
-        2, 0, 2, 2,
-        2, 4, 2, 4,
-        2, 0, 0, 0,
-        8, 8, 8, 8]);
+        4, 4, 4, 2,
+        2, 8, 8, 4,
+        8, 0, 0, 8,
+        0, 0, 0, 0]);
 });
 
 
