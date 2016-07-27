@@ -32,4 +32,21 @@ QUnit.test("Grid slideLeft", function (a) {
 });
 
 
+QUnit.test("Grid slideTop", function (a) {
+    var initialGridValues = [
+        2, 0, 2, 2,
+        2, 4, 2, 4,
+        2, 0, 0, 0,
+        8, 8, 8, 8];
+
+
+    var grid = createGridFromList(initialGridValues);
+    a.deepEqual(G.slideTop(grid), [
+        2, 0, 2, 2,
+        2, 4, 2, 4,
+        2, 0, 0, 0,
+        8, 8, 8, 8]);
+});
+
+
 

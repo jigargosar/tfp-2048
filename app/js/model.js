@@ -48,6 +48,9 @@ TFP.APP2048.Grid = (function (_, A) {
             compressRows,
             _.map(mergeAdjacentValuesWhenEqual),
             compressRows,
-            _.splitEvery(4))
+            _.splitEvery(4)),
+        slideTop: function (grid) {
+            return grid;
+        }
     };
 })(TFP.Functional, G.Assert);
