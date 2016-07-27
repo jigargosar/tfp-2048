@@ -38,25 +38,27 @@ TFP.APP2048.Grid = (function (_, A) {
     };
 
     var mapNum = _.map;
+
+    var listToRowsAndBack = function (fnList) {
+        var allFns = _.compose(_.prepend(_.unnest), _.append(_.splitEvery(4)))(fnList);
+        return _.apply(_.compose, allFns);
+    };
+    var slideRowsLeft = _.compose(
+        compressRows,
+        _.map(mergeAdjacentValuesWhenEqual),
+        compressRows);
     return {
         createGridFromList: createGrid,
         createRandomGrid: createGrid,
         mapNum: mapNum,
         toList: mapNum(_.identity),
-        slideLeft: _.compose(
-            _.unnest,
-            compressRows,
-            _.map(mergeAdjacentValuesWhenEqual),
-            compressRows,
-            _.splitEvery(4)),
-        slideTop: _.compose(
-            _.unnest,
+        slideLeft: listToRowsAndBack([
+            slideRowsLeft
+        ]),
+        slideTop: listToRowsAndBack([
             _.apply(_.compose, _.repeat(_.transpose, 1)),
-            compressRows,
-            _.map(mergeAdjacentValuesWhenEqual),
-            compressRows,
-            _.apply(_.compose, _.repeat(_.transpose, 3)),
-            _.splitEvery(4)
-        )
+            slideRowsLeft,
+            _.apply(_.compose, _.repeat(_.transpose, 3))
+        ])
     };
 })(TFP.Functional, G.Assert);
