@@ -22,19 +22,19 @@ TFP.APP2048.Grid = (function (_, A) {
         return _.concat(newRow, _.repeat(0, 4 - _.length(newRow)));
     });
 
+    var listLensPairs = _.compose(_.aperture(2), _.times(_.lensIndex), _.length);
 
-    var mergeLensValuesWhenEqual = function (lens1, lens2) {
+    var mergeLensValuesWhenEqual = function (lens1, lens2, list) {
         var lensValueEquals = _.converge(_.equals, [_.view(lens1), _.view(lens2)]);
         var mergeLensValues = _.compose(_.set(lens2, 0), _.over(lens1, _.multiply(2)));
-        return _.when(lensValueEquals, mergeLensValues);
+        return _.when(lensValueEquals, mergeLensValues)(list);
     };
-    var lensPairs = _.compose(_.aperture(2), _.times(_.lensIndex), _.length);
 
-    var addAdjacentNums = function (list) {
-        var updateListReducer = function (list, lensPair) {
-            return _.apply(mergeLensValuesWhenEqual, lensPair)(list);
+    var mergeAdjacentValuesWhenEqual = function (list) {
+        var reducer = function (list, lensPair) {
+            return _.apply(mergeLensValuesWhenEqual, _.append(list, lensPair));
         };
-        return _.reduce(updateListReducer, list, lensPairs(list));
+        return _.reduce(reducer, list, listLensPairs(list));
     };
 
     var mapNum = _.map;
@@ -46,7 +46,7 @@ TFP.APP2048.Grid = (function (_, A) {
         slideLeft: _.compose(
             _.unnest,
             compressRows,
-            _.map(addAdjacentNums),
+            _.map(mergeAdjacentValuesWhenEqual),
             compressRows,
             _.splitEvery(4))
     };
