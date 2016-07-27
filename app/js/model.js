@@ -28,14 +28,13 @@ TFP.APP2048.Grid = (function (_, A) {
         var mergeLensValues = _.compose(_.set(lens2, 0), _.over(lens1, _.multiply(2)));
         return _.when(lensValueEquals, mergeLensValues);
     };
+    var lensPairs = _.compose(_.aperture(2), _.times(_.lensIndex), _.length);
 
     var addAdjacentNums = function (list) {
-        var lensPairs = _.compose(_.aperture(2), _.times(_.lensIndex), _.length)(list);
-
         var updateListReducer = function (list, lensPair) {
             return _.apply(mergeLensValuesWhenEqual, lensPair)(list);
         };
-        return _.reduce(updateListReducer, list, lensPairs);
+        return _.reduce(updateListReducer, list, lensPairs(list));
     };
 
     var mapNum = _.map;
