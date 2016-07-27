@@ -1,0 +1,21 @@
+{
+  "name": "tfp-2048-with-ramda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "karma": "1.1.1",
+    "karma-chrome-launcher": "1.0.1",
+    "karma-qunit": "1.1.0",
+    "qunitjs": "2.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
