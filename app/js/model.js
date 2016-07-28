@@ -18,64 +18,35 @@ TFP.APP2048.Grid = (function (_, A) {
         }
     })();
 
-    var rotateMatrixLeftN = (function () {
+    const applyN = _.compose(_.reduceRight(_.compose, _.identity), _.repeat);
+
+    var rotateMatrixLeftN = function (n) {
         var reverseRows = _.map(_.reverse);
         var rotateLeft = _.compose(_.transpose, reverseRows);
-        return function rotateLeftN(n) {
-            if (n === 0) {
-                return _.identity;
-            }
-            return _.apply(_.compose, _.repeat(rotateLeft, n))
-        }
-    })();
-
-
-    var viewEq = _.curry(function (lens1, lens2, object) {
-        return _.converge(_.equals, [_.view(lens1), _.view(lens2)])(object)
-    });
-
-    function mapToLensIndex(list) {
-        return _.times(_.lensIndex, _.length(list));
-    }
+        return applyN(rotateLeft, n)
+    };
 
     var slideLeftWithPreSlideRotateLeftCount = (function () {
 
-        var slideRowsLeft = (function () {
+        var slideRowLeft = (function () {
 
-            var moveZerosToRight = _.map(function (list) {
+            var moveNonZerosToLeft = function (list) {
                 var nonZeroList = _.reject(_.equals(0), list);
                 return _.concat(nonZeroList, _.repeat(0, _.length(list) - _.length(nonZeroList)));
-            });
+            };
 
-            var mergeAdjacentValuesWhenEqual = (function () {
-
-                var mergeLensValuesWhenEqual = function (list, lensPair) {
-                    var mergeLensValues = _.curry(function (lens1, lens2, list) {
-                        return _.compose(
-                            _.set(lens2, 0),
-                            _.over(lens1, _.multiply(2))
-                        )(list)
-                    });
-                    var withLensPair = _.apply(_.__, lensPair);
-                    return _.when(
-                        withLensPair(viewEq),
-                        withLensPair(mergeLensValues)
-                    )(list);
-                };
-
-                return function (list) {
-                    return _.reduce(
-                        mergeLensValuesWhenEqual,
-                        list,
-                        _.aperture(2, mapToLensIndex(list))
-                    );
-                }
-            })();
+            var mergeAdjacentValuesToLeftWhenEqual = _.reduce(function (list, num) {
+                return _.ifElse(
+                    _.converge(_.equals, [_.always(num), _.last]),
+                    _.converge(_.concat, [_.init, _.always([num * 2, 0])]),
+                    _.append(num)
+                )(list);
+            }, []);
 
             return _.compose(
-                moveZerosToRight,
-                _.map(mergeAdjacentValuesWhenEqual),
-                moveZerosToRight);
+                moveNonZerosToLeft,
+                mergeAdjacentValuesToLeftWhenEqual,
+                moveNonZerosToLeft)
         })();
 
         return function slideLeftWithPreSlideRotateLeftCount(preSlideRotateLeftCount) {
@@ -83,7 +54,7 @@ TFP.APP2048.Grid = (function (_, A) {
             return _.compose(
                 _.unnest,
                 rotateMatrixLeftN(postSlideRotateLeftCount),
-                slideRowsLeft,
+                _.map(slideRowLeft),
                 rotateMatrixLeftN(preSlideRotateLeftCount),
                 _.splitEvery(4));
         }
