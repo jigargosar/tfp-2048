@@ -3,30 +3,41 @@
 TFP.APP2048 = {};
 
 TFP.APP2048.Grid = (function (_, A) {
-    var gridCellCount = 4 * 4;
+
+    var composeN = _.curry(function composeN(fn, n) {
+        return _.reduce(_.compose, _.compose(_.identity), _.repeat(fn, n));
+    });
+
+    var rotateMatrixLeftN = (function () {
+        var reverseRows = _.map(_.reverse);
+        var rotateLeft = _.compose(_.transpose, reverseRows);
+        return composeN(rotateLeft);
+    })();
+
+    // var log = _.bind(console.log, console);
+    // var prettyPrint = function (rows) {
+    //     _.forEach(log, rows)
+    // };
+
+// todo: move above code to tfp.Functional
+
+    var totalCells = 4 * 4;
+
+    var createRandomCellValue = function () {
+        return Math.random() > 0.8 ? 2 : 0;
+    };
 
     var createGrid = (function () {
-        var createCell = function () {
-            return Math.random() > 0.8 ? 2 : 0;
-        };
         return function (list) {
             if (_.type(list) === "Array") {
-                A.true(_.length(list) === gridCellCount, "Grid cell count should be exactly:" + gridCellCount);
+                A.true(_.length(list) === totalCells, "list size should be exactly:" + totalCells);
                 return _.clone(list);
             }
-            return _.times(createCell, gridCellCount);
+            return _.times(createRandomCellValue, totalCells);
         }
     })();
 
-    const applyN = _.compose(_.reduceRight(_.compose, _.identity), _.repeat);
-
-    var rotateMatrixLeftN = function (n) {
-        var reverseRows = _.map(_.reverse);
-        var rotateLeft = _.compose(_.transpose, reverseRows);
-        return applyN(rotateLeft, n)
-    };
-
-    var slideLeftWithPreSlideRotateLeftCount = (function () {
+    var slideLeft = (function () {
 
         var slideRowLeft = (function () {
 
@@ -49,7 +60,8 @@ TFP.APP2048.Grid = (function (_, A) {
                 moveNonZerosToLeft)
         })();
 
-        return function slideLeftWithPreSlideRotateLeftCount(preSlideRotateLeftCount) {
+        return function (options) {
+            var preSlideRotateLeftCount = options.rotateLeftCount;
             var postSlideRotateLeftCount = (4 - preSlideRotateLeftCount) % 4;
             return _.compose(
                 _.unnest,
@@ -61,11 +73,6 @@ TFP.APP2048.Grid = (function (_, A) {
     })();
 
 
-    // var log = _.bind(console.log, console);
-    // var prettyPrint = function (rows) {
-    //     _.forEach(log, rows)
-    // };
-
     var mapNum = _.map;
 
     return {
@@ -73,12 +80,17 @@ TFP.APP2048.Grid = (function (_, A) {
         createRandomGrid: createGrid,
         mapNum: mapNum,
         toList: mapNum(_.identity),
-        slideLeft: slideLeftWithPreSlideRotateLeftCount(0),
-        slideUp: slideLeftWithPreSlideRotateLeftCount(1),
-        slideRight: slideLeftWithPreSlideRotateLeftCount(2),
-        slideDown: slideLeftWithPreSlideRotateLeftCount(3),
+        slideLeft: slideLeft({rotateLeftCount: 0}),
+        slideUp: slideLeft({rotateLeftCount: 1}),
+        slideRight: slideLeft({rotateLeftCount: 2}),
+        slideDown: slideLeft({rotateLeftCount: 3}),
         addRandomNumber: function (grid) {
-
+            var randomValue = createRandomCellValue();
+            var randomIndex = (Math.random() * 16) | 0;
+            if (grid[randomIndex] === 0) {
+                return _.update(randomIndex, randomValue, grid);
+            }
+            return grid;
         }
     };
 })(TFP.Functional, G.Assert);
