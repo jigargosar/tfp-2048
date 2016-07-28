@@ -67,3 +67,21 @@ QUnit.test("rotate right", function (a) {
 });
 
 
+QUnit.test("rotate left", function (a) {
+    var initialGridValues = [
+        [1, 2],
+        [3, 4]
+    ];
+
+    var reverseRows = _.map(_.reverse);
+
+    var zip2 = _.apply(_.zip);
+    a.deepEqual(_.compose(_.transpose, reverseRows)(initialGridValues),
+        [
+            [2, 4],
+            [1, 3]
+        ]
+    );
+});
+
+
