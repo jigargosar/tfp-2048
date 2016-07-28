@@ -34,7 +34,7 @@ TFP.APP2048.Grid = (function (_, A) {
         return _.converge(_.equals, [_.view(lens1), _.view(lens2)])(object)
     });
 
-    function mapToLens(list) {
+    function mapToLensIndex(list) {
         return _.times(_.lensIndex, _.length(list));
     }
 
@@ -50,18 +50,24 @@ TFP.APP2048.Grid = (function (_, A) {
             var mergeAdjacentValuesWhenEqual = (function () {
 
                 var mergeLensValuesWhenEqual = function (list, lensPair) {
-                    var lens1 = lensPair[0];
-                    var lens2 = lensPair[1];
-
-                    var mergeLensValues = _.compose(_.set(lens2, 0), _.over(lens1, _.multiply(2)));
-                    return _.when(viewEq(lens1, lens2), mergeLensValues)(list);
+                    var mergeLensValues = _.curry(function (lens1, lens2, list) {
+                        return _.compose(
+                            _.set(lens2, 0),
+                            _.over(lens1, _.multiply(2))
+                        )(list)
+                    });
+                    var withLensPair = _.apply(_.__, lensPair);
+                    return _.when(
+                        withLensPair(viewEq),
+                        withLensPair(mergeLensValues)
+                    )(list);
                 };
 
-                return function mergeAdjacentValuesWhenEqual(list) {
+                return function (list) {
                     return _.reduce(
                         mergeLensValuesWhenEqual,
                         list,
-                        _.aperture(2, mapToLens(list))
+                        _.aperture(2, mapToLensIndex(list))
                     );
                 }
             })();
