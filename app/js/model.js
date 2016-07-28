@@ -27,6 +27,11 @@ TFP.APP2048.Grid = (function (_, A) {
         return Math.random() > 0.8 ? 2 : 0;
     };
 
+    var createRandomFillValue = function () {
+        return Math.random() > 0.8 ? 2 : 4;
+    };
+
+
     var createGrid = (function () {
         return function (list) {
             if (_.type(list) === "Array") {
@@ -85,12 +90,18 @@ TFP.APP2048.Grid = (function (_, A) {
         slideRight: slideLeft({rotateLeftCount: 2}),
         slideDown: slideLeft({rotateLeftCount: 3}),
         addRandomNumber: function (grid) {
-            var randomValue = createRandomCellValue();
-            var randomIndex = (Math.random() * 16) | 0;
-            if (grid[randomIndex] === 0) {
-                return _.update(randomIndex, randomValue, grid);
-            }
-            return grid;
+            var randomValue = createRandomFillValue();
+            var randomIndex = function () {
+                return (Math.random() * 16) | 0;
+            };
+            return _.reduce(function (grid) {
+                var ri = randomIndex();
+                console.log(ri, randomValue);
+                if (grid[ri] === 0) {
+                    return _.reduced(_.update(ri, randomValue, grid));
+                }
+                return grid;
+            }, grid, _.range(0, 16 * 16 * 100))
         }
     };
 })(TFP.Functional, G.Assert);
