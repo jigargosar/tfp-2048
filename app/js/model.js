@@ -49,8 +49,17 @@ TFP.APP2048.Grid = (function (_, A) {
         compressRows);
 
     var rotateRows = function (degrees) {
-        return _.apply(_.compose, _.repeat(_.transpose, degrees/90));
+        degrees += 360;
+        var reverseRows = _.map(_.reverse);
+        var rotateRight = _.compose(reverseRows, _.transpose);
+        return _.apply(_.compose, _.repeat(rotateRight, (degrees / 90) | 0));
     };
+
+    var log = _.bind(console.log, console);
+    var prettyPrint = function (rows) {
+        _.forEach(log, rows)
+    };
+
     return {
         createGridFromList: createGrid,
         createRandomGrid: createGrid,
@@ -59,20 +68,23 @@ TFP.APP2048.Grid = (function (_, A) {
         slideLeft: withListAsRows([
             slideRowsLeft
         ]),
-        slideTop: withListAsRows([
+        slideUp: withListAsRows([
             rotateRows(90),
             slideRowsLeft,
-            rotateRows(270)
+            rotateRows(-90)
         ]),
         slideRight: withListAsRows([
             rotateRows(180),
             slideRowsLeft,
             rotateRows(180)
         ]),
-        slideBottom: withListAsRows([
-            rotateRows(270),
+        slideDown: withListAsRows([
+            rotateRows(-90),
             slideRowsLeft,
             rotateRows(90)
-        ])
+        ]),
+        addRandomNumber: function (grid) {
+
+        }
     };
 })(TFP.Functional, G.Assert);

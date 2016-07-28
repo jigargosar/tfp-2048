@@ -32,7 +32,7 @@ QUnit.test("Grid slideLeft", function (a) {
 });
 
 
-QUnit.test("Grid slideTop", function (a) {
+QUnit.test("Grid slideUp", function (a) {
     var initialGridValues = [
         2, 0, 2, 2,
         2, 4, 2, 4,
@@ -41,12 +41,29 @@ QUnit.test("Grid slideTop", function (a) {
 
 
     var grid = createGridFromList(initialGridValues);
-    a.deepEqual(G.slideTop(grid), [
+    a.deepEqual(G.slideUp(grid), [
         4, 4, 4, 2,
         2, 8, 8, 4,
         8, 0, 0, 8,
         0, 0, 0, 0]);
 });
 
+
+QUnit.test("rotate right", function (a) {
+    var initialGridValues = [
+        [1, 2],
+        [3, 4]
+    ];
+
+    var reverseRows = _.map(_.reverse);
+
+    var zip2 = _.apply(_.zip);
+    a.deepEqual(_.compose(reverseRows, _.transpose)(initialGridValues),
+        [
+            [3, 1],
+            [4, 2]
+        ]
+    );
+});
 
 
