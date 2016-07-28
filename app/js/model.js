@@ -34,6 +34,10 @@ TFP.APP2048.Grid = (function (_, A) {
         return _.converge(_.equals, [_.view(lens1), _.view(lens2)])(object)
     });
 
+    function mapToLens(list) {
+        return _.times(_.lensIndex, _.length(list));
+    }
+
     var slideLeftWithPreSlideRotateLeftCount = (function () {
 
         var slideRowsLeft = (function () {
@@ -53,10 +57,12 @@ TFP.APP2048.Grid = (function (_, A) {
                     return _.when(viewEq(lens1, lens2), mergeLensValues)(list);
                 };
 
-                var adjacentLensPairs = _.compose(_.aperture(2), _.times(_.lensIndex), _.length);
-
-                return function (list) {
-                    return _.reduce(mergeLensValuesWhenEqual, list, adjacentLensPairs(list));
+                return function mergeAdjacentValuesWhenEqual(list) {
+                    return _.reduce(
+                        mergeLensValuesWhenEqual,
+                        list,
+                        _.aperture(2, mapToLens(list))
+                    );
                 }
             })();
 
