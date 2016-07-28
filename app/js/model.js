@@ -18,7 +18,7 @@ TFP.APP2048.Grid = (function (_, A) {
         }
     })();
 
-    var rotateRowsLeftN = (function () {
+    var rotateMatrixLeftN = (function () {
         var reverseRows = _.map(_.reverse);
         var rotateLeft = _.compose(_.transpose, reverseRows);
         return function rotateLeftN(n) {
@@ -70,9 +70,9 @@ TFP.APP2048.Grid = (function (_, A) {
             var postSlideRotateLeftCount = (4 - preSlideRotateLeftCount) % 4;
             return _.compose(
                 _.unnest,
-                rotateRowsLeftN(postSlideRotateLeftCount),
+                rotateMatrixLeftN(postSlideRotateLeftCount),
                 slideRowsLeft,
-                rotateRowsLeftN(preSlideRotateLeftCount),
+                rotateMatrixLeftN(preSlideRotateLeftCount),
                 _.splitEvery(4));
         }
     })();
