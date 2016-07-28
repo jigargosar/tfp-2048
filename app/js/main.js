@@ -17,9 +17,9 @@ TFP.APP2048.Main = (function (_, mount, G, RootView) {
         const ArrowLeft = 37;
         const ArrowRight = 39;
 
-        var keyCodes = [ArrowUp, ArrowDown, ArrowLeft, ArrowRight];
-        var slideFns = [G.slideUp, G.slideDown, G.slideLeft, G.slideRight];
-        var mapping = _.zipObj(keyCodes, slideFns);
+        var mapping = _.zipObj(
+            [ArrowUp, ArrowDown, ArrowLeft, ArrowRight],
+            [G.slideUp, G.slideDown, G.slideLeft, G.slideRight]);
 
         var safeSlide = _.propOr(_.identity, keyCode, mapping);
         return safeSlide(grid);
