@@ -31,15 +31,13 @@ TFP.APP2048.Grid = (function (_, A) {
         return Math.random() > 0.8 ? 2 : 4;
     };
 
-    var createGrid = (function () {
-        return function (list) {
-            if (_.type(list) === "Array") {
-                A.true(_.length(list) === totalCells, "list size should be exactly:" + totalCells);
-                return _.clone(list);
-            }
-            return _.times(randomCellValueForGrid, totalCells);
-        }
-    })();
+    var createRandomGrid = function () {
+        return _.times(randomCellValueForGrid, totalCells);
+    };
+
+    var createGridFromList = function (list) {
+        return _.clone(list);
+    };
 
     var slideLeft = (function () {
 
@@ -80,8 +78,8 @@ TFP.APP2048.Grid = (function (_, A) {
     var mapNum = _.map;
 
     return {
-        createGridFromList: createGrid,
-        createRandomGrid: createGrid,
+        createGridFromList: createGridFromList,
+        createRandomGrid: createRandomGrid,
         mapNum: mapNum,
         toList: mapNum(_.identity),
         slideLeft: slideLeft({rotateLeftCount: 0}),
