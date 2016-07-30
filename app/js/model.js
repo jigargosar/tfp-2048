@@ -96,7 +96,6 @@ TFP.APP2048.Grid = (function (_, A) {
             };
             return _.reduce(function (grid) {
                 var ri = randomIndex();
-                console.log(ri, randomValue);
                 if (grid[ri] === 0) {
                     return _.reduced(_.update(ri, randomValue, grid));
                 }
