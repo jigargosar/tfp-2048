@@ -75,7 +75,14 @@ TFP.APP2048.Grid = (function (_, A) {
     })();
 
 
+    var reduceWithIndex = _.addIndex(_.reduce);
     var mapNum = _.map;
+
+    function indicesWithZero(grid) {
+        return reduceWithIndex(function (zeroIndices, value, idx) {
+            return value === 0 ? _.append(idx, zeroIndices) : zeroIndices;
+        }, [], grid);
+    }
 
     return {
         createGridFromList: createGridFromList,
@@ -87,17 +94,13 @@ TFP.APP2048.Grid = (function (_, A) {
         slideRight: slideLeft({rotateLeftCount: 2}),
         slideDown: slideLeft({rotateLeftCount: 3}),
         addRandomNumber: function (grid) {
-            var emptyCellIndices = _.compose(
-                _.map(_.head), _.filter(_.compose(_.equals(0), _.last)), _.toPairs
-            )(grid);
-
-            if (_.isEmpty(emptyCellIndices)) {
+            var zeroIndices = indicesWithZero(grid);
+            if (_.isEmpty(zeroIndices)) {
                 console.log("Game over");
                 return grid;
             } else {
-                var randomIndex = (Math.random() * _.length(emptyCellIndices)) | 0;
-                var emptyCellIndex = emptyCellIndices[randomIndex];
-                return _.update(parseInt(emptyCellIndex), randomCellValue(), grid)
+                var randomIndex = (Math.random() * _.length(zeroIndices)) | 0;
+                return _.update(zeroIndices[randomIndex], randomCellValue(), grid)
             }
         }
     };
