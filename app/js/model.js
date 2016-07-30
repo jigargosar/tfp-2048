@@ -89,17 +89,18 @@ TFP.APP2048.Grid = (function (_, A) {
         slideRight: slideLeft({rotateLeftCount: 2}),
         slideDown: slideLeft({rotateLeftCount: 3}),
         addRandomNumber: function (grid) {
-            var randomValue = randomCellValue();
-            var randomIndex = function () {
-                return (Math.random() * 16) | 0;
-            };
-            return _.reduce(function (grid) {
-                var ri = randomIndex();
-                if (grid[ri] === 0) {
-                    return _.reduced(_.update(ri, randomValue, grid));
-                }
+            var emptyCellIndices = _.compose(
+                _.map(_.head), _.filter(_.compose(_.equals(0), _.last)), _.toPairs
+            )(grid);
+
+            if (_.isEmpty(emptyCellIndices)) {
+                console.log("Game over");
                 return grid;
-            }, grid, _.range(0, 16 * 16 * 100))
+            } else {
+                var randomIndex = (Math.random() * _.length(emptyCellIndices)) | 0;
+                var emptyCellIndex = emptyCellIndices[randomIndex];
+                return _.update(parseInt(emptyCellIndex), randomCellValue(), grid)
+            }
         }
     };
 })(TFP.Functional, G.Assert);
