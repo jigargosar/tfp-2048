@@ -23,14 +23,13 @@ TFP.APP2048.Grid = (function (_, A) {
 
     var totalCells = 4 * 4;
 
-    var createRandomCellValue = function () {
+    var randomCellValueForGrid = function () {
         return Math.random() > 0.8 ? 2 : 0;
     };
 
-    var createRandomFillValue = function () {
+    var randomCellValue = function () {
         return Math.random() > 0.8 ? 2 : 4;
     };
-
 
     var createGrid = (function () {
         return function (list) {
@@ -38,7 +37,7 @@ TFP.APP2048.Grid = (function (_, A) {
                 A.true(_.length(list) === totalCells, "list size should be exactly:" + totalCells);
                 return _.clone(list);
             }
-            return _.times(createRandomCellValue, totalCells);
+            return _.times(randomCellValueForGrid, totalCells);
         }
     })();
 
@@ -90,7 +89,7 @@ TFP.APP2048.Grid = (function (_, A) {
         slideRight: slideLeft({rotateLeftCount: 2}),
         slideDown: slideLeft({rotateLeftCount: 3}),
         addRandomNumber: function (grid) {
-            var randomValue = createRandomFillValue();
+            var randomValue = randomCellValue();
             var randomIndex = function () {
                 return (Math.random() * 16) | 0;
             };

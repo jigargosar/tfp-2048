@@ -26,7 +26,6 @@ TFP.APP2048.Main = (function (_, mount, G, RootView) {
     };
 
     window.addEventListener("keyup", function (event) {
-        // console.log(event.key, event.keyCode);
         grid = slideGridForKeyCode(event.keyCode, grid);
         grid = G.addRandomNumber(grid);
         render();
